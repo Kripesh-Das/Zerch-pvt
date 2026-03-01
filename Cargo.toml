@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "crates/zerch-core",
+    "crates/zerch-embed",
+    "crates/zerch-engine",
+    "crates/zerch-storage"
+]
+
+resolver = "2"

@@ -12,7 +12,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout the code
         uses: actions/checkout@v3
-        
-        # Will add next jobs as per code requirements
+
+      - name: Install rust
+        # uses: actions-rs/toolchain@stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: cargo build --verbose
+
+        # Will add next steps as per code requirements
