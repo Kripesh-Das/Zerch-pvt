@@ -1,6 +1,6 @@
 # Zerch
 
-A minimal Rust vector search engine for high performance.
+A vector search engine for logs.
 
 ## Architecture(will update)
 
