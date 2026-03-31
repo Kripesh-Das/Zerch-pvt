@@ -1,0 +1,218 @@
+.incident-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fade-in 0.2s ease;
+}
+
+.incident-details {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 860px;
+    height: min-content;
+    max-height: 85vh;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    animation: slide-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+.incident-details__header {
+    padding: 24px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.severity-tag {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.severity-tag--critical {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--log-error);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.severity-tag--warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--log-warn);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.header-id {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all var(--transition);
+}
+
+.close-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.incident-details__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+}
+
+.details-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.details-section__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent-blue);
+}
+
+.details-section__title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+}
+
+.details-section__body {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.insight-card {
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.insight-lbl {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--log-debug);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.insight-val {
+    color: var(--text-primary);
+}
+
+.similar-logs {
+    background: #090b10;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.similar-log-item {
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.similar-log-item:last-child {
+    border: none;
+}
+
+.fix-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fix-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+}
+
+.fix-bullet {
+    width: 6px;
+    height: 6px;
+    background: var(--log-success);
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+.incident-details__footer {
+    padding: 20px 24px;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-actions {
+    display: flex;
+    gap: 8px;
+}
+
+@media (max-width: 800px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+}
