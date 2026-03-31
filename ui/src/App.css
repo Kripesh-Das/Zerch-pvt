@@ -1,0 +1,124 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg-base);
+  overflow: hidden;
+}
+
+.app-main {
+  flex: 1;
+  overflow: hidden;
+  padding: 16px;
+  position: relative;
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  gap: 16px;
+  height: 100%;
+}
+
+/* Main Column Layout (Left) */
+.panel-main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.panel-main-column .search-panel {
+  flex-shrink: 0;
+}
+
+.panel-main-column .log-panel--main {
+  flex: 1;
+  min-height: 0;
+  /* Enable shrinking/scrolling */
+}
+
+/* Side Column Layout (Right) */
+.panel-side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.panel-side-column .upload-section {
+  flex-shrink: 0;
+}
+
+.panel-side-column .incident-section--sidebar {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-header--sticky {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg-card);
+}
+
+.status-bar {
+  height: 28px;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.status-bar__left,
+.status-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-label {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+}
+
+.status-value {
+  color: var(--text-secondary);
+}
+
+.status-value--ready {
+  color: var(--log-success);
+}
+
+@media (max-width: 1200px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    overflow-y: auto;
+  }
+
+  .panel-main-column,
+  .panel-side-column {
+    height: auto;
+    min-height: 600px;
+  }
+}
