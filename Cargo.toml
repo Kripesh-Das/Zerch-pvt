@@ -4,7 +4,8 @@ members = [
     "crates/zerch-embed",
     "crates/zerch-engine",
     "crates/zerch-storage",
-    "crates/zerch-api"
+    "crates/zerch-api",
+    "crates/zerch-mcp-server"
 ]
 
 resolver = "2"
