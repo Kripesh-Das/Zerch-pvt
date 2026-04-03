@@ -1,8 +1,8 @@
-# CLAUDE.md — Zerch Project Guide
+# CLAUDE.md — Zerch-pvt Project Guide
 
-## What is Zerch?
+## What is Zerch-pvt?
 
-Zerch is a **vector-powered semantic search engine for logs**, built in Rust with a React frontend. Users upload log files through the UI, each log line is embedded into a 384-dimensional vector using a local sentence-transformer model (all-MiniLM-L6-v2 via ONNX Runtime), stored in a compact binary format, and then searchable via cosine similarity. An AI summarization feature (via Groq API) lets users click on search results to get LLM-generated insights.
+Zerch-pvt is a **vector-powered semantic search engine for logs**, built in Rust with a React frontend. Users upload log files through the UI, each log line is embedded into a 384-dimensional vector using a local sentence-transformer model (all-MiniLM-L6-v2 via ONNX Runtime), stored in a compact binary format, and then searchable via cosine similarity. An AI summarization feature (via Groq API) lets users click on search results to get LLM-generated insights.
 
 **License:** MIT — Copyright (c) 2026 Sagnik Das
 
@@ -11,16 +11,16 @@ Zerch is a **vector-powered semantic search engine for logs**, built in Rust wit
 ## Repository Layout
 
 ```
-Zerch/
+Zerch-pvt/
 ├── Cargo.toml                 # Workspace root (resolver = "2")
 ├── .env                       # GROQ_API_KEY for AI summarization (gitignored)
 ├── .github/workflows/ci.yaml  # GitHub Actions CI — build on push/PR
 ├── crates/
-│   ├── zerch-core/            # Distance metrics (cosine similarity, euclidean distance)
-│   ├── zerch-embed/           # Local embedding model loading & inference (ONNX Runtime)
-│   ├── zerch-storage/         # Binary vector store (append-only .bin file)
-│   ├── zerch-engine/          # CLI tool — index log files & search from terminal
-│   └── zerch-api/             # HTTP API server (Actix-Web) — upload, search, summarize
+│   ├── zerch-pvt-core/            # Distance metrics (cosine similarity, euclidean distance)
+│   ├── zerch-pvt-embed/           # Local embedding model loading & inference (ONNX Runtime)
+│   ├── zerch-pvt-storage/         # Binary vector store (append-only .bin file)
+│   ├── zerch-pvt-engine/          # CLI tool — index log files & search from terminal
+│   └── zerch-pvt-api/             # HTTP API server (Actix-Web) — upload, search, summarize
 ├── ui/                        # React frontend (Vite + React 19)
 ├── zerch_data.bin             # The binary vector store file (gitignored)
 └── models--sentence-transformers--all-MiniLM-L6-v2/  # Cached HF model (gitignored)
