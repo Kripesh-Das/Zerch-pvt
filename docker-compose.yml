@@ -34,27 +34,8 @@ services:
     container_name: zerch-ui
     ports:
       - "5173:5173"
-    environment:
-      - VITE_API_URL=http://api:8080
     depends_on:
       - api
-    networks:
-      - zerch-network
-    restart: unless-stopped
-
-  # Nginx Reverse Proxy (Optional but recommended for production)
-  nginx:
-    image: nginx:latest
-    container_name: zerch-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - api
-      - ui
     networks:
       - zerch-network
     restart: unless-stopped
