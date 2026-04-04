@@ -28,7 +28,7 @@ async fn main() -> Result<()> {
     eprintln!("Loading embedding model...");
     let embedder = LocalEmbedder::load()?;
 
-    let state = AppState::new(embedder, config.store_path.clone());
+    let state = AppState::new(embedder, config.store_path.clone())?;
     let server = Arc::new(McpServer::new(config.clone(), state));
 
     match config.transport {

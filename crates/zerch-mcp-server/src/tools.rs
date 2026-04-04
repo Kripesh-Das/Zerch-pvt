@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
-use std::fs::File;
+use std::fs::{File, OpenOptions, create_dir_all};
 use std::io::Read;
 use std::path::PathBuf;
 use tokio::sync::Mutex;
@@ -16,11 +16,26 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn new(embedder: LocalEmbedder, store_path: impl Into<PathBuf>) -> Self {
-        Self {
-            embedder: Mutex::new(embedder),
-            store_path: store_path.into(),
+    pub fn new(embedder: LocalEmbedder, store_path: impl Into<PathBuf>) -> Result<Self> {
+        let store_path = store_path.into();
+
+        if let Some(parent) = store_path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+        {
+            create_dir_all(parent).context("failed to create vector store parent directory")?;
         }
+
+        OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&store_path)
+            .context("failed to initialize vector store file")?;
+
+        Ok(Self {
+            embedder: Mutex::new(embedder),
+            store_path,
+        })
     }
 }
 
@@ -108,9 +123,10 @@ pub async fn search_logs(state: &AppState, args: SearchArgs) -> Result<SearchRes
             None => break, // clean EOF
         };
 
-        let log_vector = read_f32_vec(&mut file, vec_len).context("failed to read stored vector")?;
-        let text_len = read_u32_le(&mut file)?
-            .context("unexpected EOF while reading text length")? as usize;
+        let log_vector =
+            read_f32_vec(&mut file, vec_len).context("failed to read stored vector")?;
+        let text_len =
+            read_u32_le(&mut file)?.context("unexpected EOF while reading text length")? as usize;
         let text = read_utf8_string(&mut file, text_len).context("failed to read stored text")?;
 
         let score = cosine_similarity(&query_vector, &log_vector).score;
