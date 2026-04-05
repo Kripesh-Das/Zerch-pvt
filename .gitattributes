@@ -4,3 +4,9 @@
 *.js linguist-vendored
 dist/* linguist-vendored
 build/* linguist-vendored
+*.js linguist-vendored
+*.jsx linguist-vendored
+*.ts linguist-vendored
+*.tsx linguist-vendored
+*.css linguist-vendored
+*.html linguist-vendored
