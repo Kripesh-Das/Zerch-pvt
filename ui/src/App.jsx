@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import LoginPage from './pages/LoginPage';
-import LandingPage from './pages/LandingPage';
-import DashboardPage from './pages/DashboardPage';
-import LiveLogsPage from './pages/LiveLogsPage';
-import './App.css';
+import { useState, useEffect } from "react";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import LoginPage from "./pages/LoginPage";
+import LandingPage from "./pages/LandingPage";
+import DashboardPage from "./pages/DashboardPage";
+import LiveLogsPage from "./pages/LiveLogsPage";
+import McpPage from "./pages/McpPage";
+import "./App.css";
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
@@ -15,17 +16,17 @@ function AppContent() {
       setCurrentPath(window.location.pathname);
     };
 
-    window.addEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
 
     // Also listen for custom navigation events
     const handleNavigate = () => {
       setCurrentPath(window.location.pathname);
     };
-    window.addEventListener('popstate', handleNavigate);
+    window.addEventListener("popstate", handleNavigate);
 
     return () => {
-      window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('popstate', handleNavigate);
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("popstate", handleNavigate);
     };
   }, []);
 
@@ -35,12 +36,16 @@ function AppContent() {
   }
 
   // Authenticated routes
-  if (currentPath === '/zerch') {
+  if (currentPath === "/zerch") {
     return <DashboardPage />;
   }
 
-  if (currentPath === '/live-logs') {
+  if (currentPath === "/live-logs") {
     return <LiveLogsPage />;
+  }
+
+  if (currentPath === "/mcp") {
+    return <McpPage />;
   }
 
   // Default to landing page
