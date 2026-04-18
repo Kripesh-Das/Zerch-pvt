@@ -279,7 +279,7 @@ async fn search(
         })));
     }
 
-    let limit = query.limit.unwrap_or(5) as u64;
+    let limit = query.limit.unwrap_or(10) as u64;
 
     // Auto-reindex if no data
     let count = store.count().await.map_err(|e| {
@@ -359,49 +359,46 @@ async fn search(
         actix_web::error::ErrorInternalServerError(format!("Search error: {}", e))
     })?;
 
-    // Extract search params from query (IP addresses, numbers, etc.)
+    // Extract metadata from query (IPs, numbers, words in brackets, etc.)
     let search_terms: Vec<&str> = search_query.split_whitespace().collect();
-    let query_ips: Vec<&str> = search_terms.iter()
-        .filter(|s| s.contains('.') && s.chars().filter(|c| *c == '.').count() == 3)
+    let query_metadata: Vec<&str> = search_terms.iter()
+        .filter(|s| {
+            s.contains('.') && s.chars().filter(|c| *c == '.').count() == 3 // IPs
+            || s.chars().all(|c| c.is_ascii_digit() || c == '.') // numbers
+            || s.starts_with('[') // bracketed values
+        })
         .map(|s| *s)
         .collect();
-    let query_numbers: Vec<&str> = search_terms.iter()
-        .filter(|s| s.chars().all(|c| c.is_ascii_digit() || c == '.'))
-        .map(|s| *s)
-        .collect();
+    let total_metadata_count = query_metadata.len() as f32;
 
-    // Filter and re-rank by metadata match
-    let mut scored_results: Vec<(f32, String, bool)> = raw_results
+    // Score: 80% cosine similarity + 20% metadata match
+    let mut scored_results: Vec<(f32, String, f32)> = raw_results
         .into_iter()
-        .map(|(score, text, metadata)| {
-            // Check if metadata contains search values
+        .map(|(cosine_score, text, metadata)| {
             let metadata_str = serde_json::to_string(&metadata).unwrap_or_default();
-            let mut is_exact_match = false;
             
-            // Check IP matches
-            for ip in &query_ips {
-                if metadata_str.contains(ip) {
-                    is_exact_match = true;
-                    break;
-                }
-            }
-            // Check number matches  
-            if !is_exact_match {
-                for num in &query_numbers {
-                    if metadata_str.contains(num) {
-                        is_exact_match = true;
-                        break;
+            // Count how many query metadata values appear in this log
+            let mut match_count = 0f32;
+            if total_metadata_count > 0.0 {
+                for meta_val in &query_metadata {
+                    if metadata_str.contains(meta_val) || text.contains(meta_val) {
+                        match_count += 1.0;
                     }
                 }
             }
+            let metadata_score = if total_metadata_count > 0.0 {
+                match_count / total_metadata_count
+            } else {
+                0.0
+            };
             
-            // Exact match gets score boost
-            let boosted_score = if is_exact_match { score * 1.0 + 0.1 } else { score };
-            (boosted_score, text, is_exact_match)
+            // Final score: 80% cosine + 20% metadata
+            let final_score = (cosine_score * 0.8) + (metadata_score * 0.2);
+            (final_score, text, metadata_score)
         })
         .collect();
 
-    // Sort by boosted score
+    // Sort by final score
     scored_results.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
 
     // Take top results
@@ -415,6 +412,8 @@ async fn search(
             text,
         })
         .collect();
+
+    log::info!("Search: {} metadata values found in query", total_metadata_count as usize);
 
     let count = search_results.len();
     let response = SearchResponse {

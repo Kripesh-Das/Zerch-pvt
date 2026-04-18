@@ -37,7 +37,7 @@ function DashboardPage() {
     setAiSummary(''); // Clear summary
 
     try {
-      const response = await fetch(`${API_ENDPOINTS.search}?q=${encodeURIComponent(query)}&limit=5`);
+      const response = await fetch(`${API_ENDPOINTS.search}?q=${encodeURIComponent(query)}&limit=10`);
       if (!response.ok) {
         throw new Error(`Search failed: ${response.statusText}`);
       }

@@ -1,0 +1,9 @@
+1. Analytics endpoint returning 500 due to computation error
+
+2. Investigate Redis connectivity issues where the cache connection was lost and retries were attempted 1 out of 3 times.
+
+3. JVM heap usage reaching 85 percent.
+
+4. Slow query that took 2.3 seconds to execute. precision : 3/10 and recall : 3/5
+
+5. SSL certificate expiring in 14 days for api.example.com

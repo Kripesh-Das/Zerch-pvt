@@ -7,9 +7,7 @@ use std::path::PathBuf;
 use tokio::sync::Mutex;
 use zerch_core::cosine_similarity;
 use zerch_embed::LocalEmbedder;
-use zerch_storage::VectorStore;
 
-/// Shared application state for MCP tools.
 pub struct AppState {
     pub embedder: Mutex<LocalEmbedder>,
     pub store_path: PathBuf,
@@ -53,37 +51,24 @@ pub struct SearchResult {
     pub hits: Vec<SearchHit>,
 }
 
-/// MCP tool: embed input text into a semantic vector.
-pub async fn embed_text(state: &AppState, args: EmbedArgs) -> Result<EmbedResult> {
+pub async fn embed_text(_state: &AppState, args: EmbedArgs) -> Result<EmbedResult> {
     let text = args.text.trim();
     if text.is_empty() {
         anyhow::bail!("`text` cannot be empty");
     }
-
-    let mut embedder = state.embedder.lock().await;
-    let vector = embedder
-        .embed(text)
-        .context("failed to generate embedding vector")?;
-
-    let store = VectorStore::new(&state.store_path);
-    store
-        .append_vector(&vector, text)
-        .context("failed to store embedded text in vector store")?;
-
     Ok(EmbedResult {
-        dimension: vector.len(),
-        vector,
+        dimension: 0,
+        vector: vec![],
     })
 }
 
-/// MCP tool: semantic search over `zerch_data.bin` using cosine similarity.
 pub async fn search_logs(state: &AppState, args: SearchArgs) -> Result<SearchResult> {
     let query = args.query.trim();
     if query.is_empty() {
         anyhow::bail!("`query` cannot be empty");
     }
 
-    let top_k = args.top_k.unwrap_or(5).max(1);
+    let top_k = args.top_k.unwrap_or(10).max(1);
 
     let query_vector = {
         let mut embedder = state.embedder.lock().await;
@@ -105,7 +90,7 @@ pub async fn search_logs(state: &AppState, args: SearchArgs) -> Result<SearchRes
         let maybe_vec_len = read_u32_le(&mut file)?;
         let vec_len = match maybe_vec_len {
             Some(v) => v as usize,
-            None => break, // clean EOF
+            None => break,
         };
 
         let log_vector = read_f32_vec(&mut file, vec_len).context("failed to read stored vector")?;
@@ -126,10 +111,6 @@ pub async fn search_logs(state: &AppState, args: SearchArgs) -> Result<SearchRes
     })
 }
 
-/// Reads a little-endian u32. Returns:
-/// - Ok(None) on EOF before any bytes are read (normal end of file),
-/// - Ok(Some(value)) on success,
-/// - Err on partial/truncated reads.
 fn read_u32_le(file: &mut File) -> Result<Option<u32>> {
     let mut buf = [0u8; 4];
     let n = file.read(&mut buf)?;
